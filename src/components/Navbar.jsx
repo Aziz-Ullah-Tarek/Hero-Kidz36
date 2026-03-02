@@ -12,16 +12,16 @@ const nav=<>
     <NavLink href="/">Home</NavLink>
    </li>
    <li>
-    <NavLink href="/products">Products</NavLink>
+    <NavLink href="/routes/products">Products</NavLink>
    </li>
    <li>
-    <NavLink href="/blog">blog</NavLink>
+    <NavLink href="/routes/blog">Blog</NavLink>
    </li>
    <li>
-    <NavLink href="/about">About</NavLink>
+    <NavLink href="/routes/about">About</NavLink>
    </li>
    <li>
-    <NavLink href="/contact">Contact</NavLink>
+    <NavLink href="/routes/contact">Contact</NavLink>
    </li>
 
 </>
@@ -47,10 +47,10 @@ const nav=<>
     </ul>
   </div>
   <div className="navbar-end space-x-2">
-    <Link href="/cart" className="btn btn-primary">
+    <Link href="/routes/cart" className="btn btn-primary">
     <GiShoppingCart className="text-2xl" />
     </Link>
- <Link href="/login">
+ <Link href="/routes/login">
  <button className="btn btn-primary btn-outline">Login</button>
  </Link>
   </div>

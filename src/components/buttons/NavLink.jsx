@@ -6,8 +6,17 @@ import React from 'react';
 
 const NavLink = ({ href, children }) => {
 
-    const path=usePathname();
-    return <Link className={path.startsWith(href) ? "text-primary btn" : "btn btn-ghost"} href={href}>{children}</Link>;
+    const path = usePathname();
+    const isActive = href === "/" ? path === "/" : path.startsWith(href);
+    
+    return (
+        <Link 
+            className={isActive ? "btn btn-primary" : "btn btn-ghost"} 
+            href={href}
+        >
+            {children}
+        </Link>
+    );
 };
 
 export default NavLink;
