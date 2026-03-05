@@ -7,6 +7,69 @@ import { MdLocalOffer } from 'react-icons/md';
 import { calculateDiscountedPrice, isOnSale, getDiscountBadgeText } from '@/lib/utils';
 import { Container } from '@/components/ui/CommonUI';
 
+// Generate metadata for dynamic product pages
+export async function generateMetadata({ params }) {
+    const { id } = await params;
+    
+    try {
+        const productsCollection = await dbconnect(collections.PRODUCTS);
+        const product = await productsCollection.findOne({ _id: new ObjectId(id) });
+        
+        if (!product) {
+            return {
+                title: "পণ্য খুঁজে পাওয়া যায়নি",
+                description: "এই পণ্যটি আর উপলব্ধ নেই।"
+            };
+        }
+
+        const discountedPrice = calculateDiscountedPrice(product.price, product.discount);
+        const productUrl = `https://herokidz36.vercel.app/routes/products/${id}`;
+        
+        return {
+            title: `${product.title} - হিরো কিডস`,
+            description: product.description || `${product.title} - ${product.category} - হিরো কিডস থেকে সাশ্রয়ী মূল্যে কিনুন। মূল্য: ৳${discountedPrice}`,
+            keywords: [product.title, product.category, "খেলনা", "শিশু খেলনা", "হিরো কিডস", product.brand || ""].filter(Boolean),
+            openGraph: {
+                title: product.title,
+                description: product.description || `${product.title} - ${product.category}`,
+                type: "product",
+                url: productUrl,
+                images: [
+                    {
+                        url: product.image || "https://i.ibb.co.com/xS2HhC38/Screenshot-2026-03-05-124723.png",
+                        width: 800,
+                        height: 800,
+                        alt: product.title,
+                    }
+                ],
+                siteName: "হিরো কিডস - Hero Kidz",
+            },
+            twitter: {
+                card: "summary_large_image",
+                title: product.title,
+                description: product.description || `${product.title} - ${product.category}`,
+                images: [product.image || "https://i.ibb.co.com/xS2HhC38/Screenshot-2026-03-05-124723.png"],
+            },
+            alternates: {
+                canonical: productUrl,
+            },
+            other: {
+                'product:price:amount': discountedPrice,
+                'product:price:currency': 'BDT',
+                'product:availability': product.stock > 0 ? 'in stock' : 'out of stock',
+                'product:category': product.category,
+                'product:brand': product.brand || 'Hero Kidz',
+            }
+        };
+    } catch (error) {
+        console.error('Error generating product metadata:', error);
+        return {
+            title: "পণ্য - হিরো কিডস",
+            description: "শিশুদের জন্য শিক্ষামূলক খেলনা এবং পণ্য"
+        };
+    }
+}
+
 // Generate static params for static generation (optional)
 export async function generateStaticParams() {
     try {
@@ -70,8 +133,50 @@ const ProductDetailsPage = async ({ params }) => {
     const savings = product.price - discountedPrice;
     const onSale = isOnSale(product.discount);
 
+    // Product JSON-LD Structured Data
+    const productSchema = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": product.title,
+        "image": product.image || "https://i.ibb.co.com/xS2HhC38/Screenshot-2026-03-05-124723.png",
+        "description": product.description || product.title,
+        "brand": {
+            "@type": "Brand",
+            "name": product.brand || "Hero Kidz"
+        },
+        "offers": {
+            "@type": "Offer",
+            "url": `https://herokidz36.vercel.app/routes/products/${id}`,
+            "priceCurrency": "BDT",
+            "price": discountedPrice,
+            "priceValidUntil": new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            "itemCondition": "https://schema.org/NewCondition",
+            "seller": {
+                "@type": "Organization",
+                "name": "হিরো কিডস - Hero Kidz",
+                "url": "https://herokidz36.vercel.app"
+            }
+        },
+        "category": product.category,
+        "sku": product._id,
+        "aggregateRating": product.rating ? {
+            "@type": "AggregateRating",
+            "ratingValue": product.rating,
+            "bestRating": "5",
+            "worstRating": "1",
+            "ratingCount": product.reviewCount || 1
+        } : undefined
+    };
+
     return (
-        <Container className="py-8">
+        <>
+            {/* JSON-LD Structured Data */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+            />
+            <Container className="py-8">
             {/* Breadcrumb */}
             <div className="text-sm breadcrumbs mb-6">
                 <ul>
@@ -260,6 +365,7 @@ const ProductDetailsPage = async ({ params }) => {
                 </div>
             </div>
         </Container>
+        </>
     );
 };
 

@@ -9,25 +9,25 @@ const Navbar = () => {
 const nav=<>
    
    <li>
-    <NavLink href="/">Home</NavLink>
+    <NavLink href="/">হোম</NavLink>
    </li>
    <li>
-    <NavLink href="/routes/products">Products</NavLink>
+    <NavLink href="/routes/products">পণ্য</NavLink>
    </li>
    <li>
-    <NavLink href="/routes/blog">Blog</NavLink>
+    <NavLink href="/routes/blog">ব্লগ</NavLink>
    </li>
    <li>
-    <NavLink href="/routes/about">About</NavLink>
+    <NavLink href="/routes/about">সম্পর্কে</NavLink>
    </li>
    <li>
-    <NavLink href="/routes/contact">Contact</NavLink>
+    <NavLink href="/routes/contact">যোগাযোগ</NavLink>
    </li>
 
 </>
 
     return (
-        <div className="navbar bg-base-100">
+        <div className="navbar bg-base-100 shadow-md sticky top-0 z-50 bangla-font">
   <div className="navbar-start">
     <div className="dropdown">
       <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -35,23 +35,23 @@ const nav=<>
       </div>
       <ul
         tabIndex="-1"
-        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow-xl bangla-font">
         {nav}
       </ul>
     </div>
    <Logo />
   </div>
   <div className="navbar-center hidden lg:flex">
-    <ul className="menu menu-horizontal px-1">
+    <ul className="menu menu-horizontal px-1 bangla-font font-semibold">
     {nav}
     </ul>
   </div>
   <div className="navbar-end space-x-2">
-    <Link href="/routes/cart" className="btn btn-primary">
+    <Link href="/routes/cart" className="btn btn-primary shadow-md hover:shadow-lg transition-all">
     <GiShoppingCart className="text-2xl" />
     </Link>
  <Link href="/routes/login">
- <button className="btn btn-primary btn-outline">Login</button>
+ <button className="btn btn-primary btn-outline bangla-font shadow-md hover:shadow-lg transition-all">লগইন</button>
  </Link>
   </div>
 </div>

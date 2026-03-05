@@ -98,6 +98,55 @@ const blogsData = {
     }
 };
 
+// Generate metadata for dynamic blog pages
+export async function generateMetadata({ params }) {
+    const { id } = await params;
+    const blog = blogsData[id];
+    
+    if (!blog) {
+        return {
+            title: "ব্লগ খুঁজে পাওয়া যায়নি",
+            description: "এই ব্লগটি আর উপলব্ধ নেই।"
+        };
+    }
+
+    const blogUrl = `https://herokidz36.vercel.app/routes/blog/${id}`;
+    
+    return {
+        title: `${blog.title} - হিরো কিডস ব্লগ`,
+        description: blog.excerpt,
+        keywords: [...(blog.tags || []), "হিরো কিডস", "শিশু যত্ন", "প্যারেন্টিং টিপস"],
+        authors: [{ name: blog.author || "হিরো কিডস টিম" }],
+        openGraph: {
+            title: blog.title,
+            description: blog.excerpt,
+            type: "article",
+            url: blogUrl,
+            images: [
+                {
+                    url: blog.image || "https://i.ibb.co.com/xS2HhC38/Screenshot-2026-03-05-124723.png",
+                    width: 1200,
+                    height: 630,
+                    alt: blog.title,
+                }
+            ],
+            publishedTime: blog.publishedDate || blog.date,
+            authors: [blog.author || "হিরো কিডস টিম"],
+            tags: blog.tags || [],
+            siteName: "হিরো কিডস - Hero Kidz",
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: blog.title,
+            description: blog.excerpt,
+            images: [blog.image || "https://i.ibb.co.com/xS2HhC38/Screenshot-2026-03-05-124723.png"],
+        },
+        alternates: {
+            canonical: blogUrl,
+        },
+    };
+}
+
 const BlogDetailsPage = async ({ params }) => {
     const { id } = await params;
     const blog = blogsData[id];
@@ -126,7 +175,45 @@ const BlogDetailsPage = async ({ params }) => {
         );
     }
 
+    // Article JSON-LD Structured Data
+    const articleSchema = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": blog.title,
+        "image": blog.image || "https://i.ibb.co.com/xS2HhC38/Screenshot-2026-03-05-124723.png",
+        "author": {
+            "@type": "Organization",
+            "name": blog.author || "হিরো কিডস টিম",
+            "url": "https://herokidz36.vercel.app"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "হিরো কিডস - Hero Kidz",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://i.ibb.co.com/5X7ByV4k/logo.webp"
+            }
+        },
+        "datePublished": blog.publishedDate || blog.date,
+        "dateModified": blog.modifiedDate || blog.date,
+        "description": blog.excerpt,
+        "articleBody": blog.content?.replace(/<[^>]*>/g, '') || blog.excerpt,
+        "keywords": blog.tags?.join(", ") || "",
+        "url": `https://herokidz36.vercel.app/routes/blog/${id}`,
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": `https://herokidz36.vercel.app/routes/blog/${id}`
+        },
+        "inLanguage": "bn-BD"
+    };
+
     return (
+        <>
+            {/* JSON-LD Structured Data */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+            />
         <Container className="py-8">
             {/* Breadcrumb */}
             <div className="text-sm breadcrumbs mb-6">
@@ -264,6 +351,7 @@ const BlogDetailsPage = async ({ params }) => {
                 </div>
             </div>
         </Container>
+        </>
     );
 };
 

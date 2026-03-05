@@ -1,6 +1,32 @@
 import React from 'react';
 import { FaShippingFast, FaShieldAlt, FaHeadset, FaAward } from 'react-icons/fa';
 
+export const metadata = {
+    title: "আমাদের সম্পর্কে",
+    description: "হিরো কিডস - বাংলাদেশের বিশ্বস্ত অনলাইন খেলনা শপ। আমরা শিশুদের জন্য নিরাপদ এবং শিক্ষামূলক খেলনা সরবরাহ করি। ১০০% মানসম্মত পণ্য, দ্রুত ডেলিভারি এবং ২৪/৭ সাপোর্ট।",
+    keywords: ["হিরো কিডস সম্পর্কে", "খেলনা শপ বাংলাদেশ", "শিশু পণ্য", "নিরাপদ খেলনা"],
+    openGraph: {
+        title: "আমাদের সম্পর্কে - হিরো কিডস",
+        description: "বাংলাদেশের বিশ্বস্ত অনলাইন খেলনা শপ। নিরাপদ এবং শিক্ষামূলক খেলনা।",
+        type: "website",
+        url: "https://herokidz36.vercel.app/routes/about",
+        images: [{
+            url: "https://i.ibb.co.com/5X7ByV4k/logo.webp",
+            width: 800,
+            height: 600,
+            alt: "হিরো কিডস লোগো",
+        }],
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "আমাদের সম্পর্কে - হিরো কিডস",
+        description: "বাংলাদেশের বিশ্বস্ত অনলাইন খেলনা শপ।",
+    },
+    alternates: {
+        canonical: "https://herokidz36.vercel.app/routes/about",
+    }
+};
+
 const AboutPage = () => {
     const features = [
         {

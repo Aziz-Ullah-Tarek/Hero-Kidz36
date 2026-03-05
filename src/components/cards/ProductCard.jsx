@@ -51,7 +51,7 @@ export default function ProductCard({ product }) {
           {title}
         </h2>
 
-        <p className="text-sm text-gray-500 line-clamp-1">
+        <p className="text-sm text-gray-500 line-clamp-1 bangla-text">
           {bangla}
         </p>
 
@@ -61,18 +61,18 @@ export default function ProductCard({ product }) {
             <FaStar />
             <span className="ml-1 font-medium">{ratings}</span>
           </div>
-          <span className="text-gray-400">({reviews} reviews)</span>
-          <span className="text-gray-400">• {sold} sold</span>
+          <span className="text-gray-400 bangla-font">({reviews} রিভিউ)</span>
+          <span className="text-gray-400 bangla-font">• {sold} বিক্রিত</span>
         </div>
 
         {/* Price Section */}
         <div className="flex items-center gap-3 mt-2">
-          <span className="text-xl font-bold text-primary">
+          <span className="text-xl font-bold text-primary bangla-font">
             ৳{Math.round(discountedPrice)}
           </span>
 
           {onSale && (
-            <span className="text-sm line-through text-gray-400">
+            <span className="text-sm line-through text-gray-400 bangla-font">
               ৳{price}
             </span>
           )}
@@ -81,12 +81,12 @@ export default function ProductCard({ product }) {
         {/* Buttons */}
         <div className="card-actions mt-3 gap-2">
           <Link href={`/routes/products/${product._id}`} className="flex-1">
-            <button className="btn btn-outline btn-primary btn-sm w-full gap-2">
+            <button className="btn btn-outline btn-primary btn-sm w-full gap-2 bangla-font shadow-md hover:shadow-lg transition-all">
               <FaEye />
               বিস্তারিত
             </button>
           </Link>
-          <button className="btn btn-primary btn-sm flex-1 gap-2">
+          <button className="btn btn-primary btn-sm flex-1 gap-2 bangla-font shadow-md hover:shadow-lg transition-all">
             <FaShoppingCart />
             কার্ট
           </button>

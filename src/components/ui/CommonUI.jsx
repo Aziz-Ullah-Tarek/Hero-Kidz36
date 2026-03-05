@@ -13,7 +13,7 @@ export function LoadingSpinner({ size = 'md', text = '' }) {
     return (
         <div className="flex flex-col items-center justify-center py-20">
             <span className={`loading loading-spinner loading-primary ${sizeClass}`}></span>
-            {text && <p className="mt-4 text-gray-600">{text}</p>}
+            {text && <p className="mt-4 text-gray-600 bangla-font">{text}</p>}
         </div>
     );
 }
@@ -29,8 +29,8 @@ export function ErrorAlert({ title = 'একটি সমস্যা হয়�
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div>
-                    <h3 className="font-bold">{title}</h3>
-                    {message && <div className="text-xs">{message}</div>}
+                    <h3 className="font-bold bangla-heading">{title}</h3>
+                    {message && <div className="text-xs bangla-text">{message}</div>}
                 </div>
             </div>
         </div>
@@ -46,11 +46,11 @@ export function EmptyState({ icon = '🧸', title = 'কোনো ডাটা �
             <div className="mb-4">
                 <span className="text-6xl">{icon}</span>
             </div>
-            <h3 className="text-2xl font-bold text-gray-700 mb-2">
+            <h3 className="text-2xl font-bold text-gray-700 mb-2 bangla-heading">
                 {title}
             </h3>
             {description && (
-                <p className="text-gray-500">
+                <p className="text-gray-500 bangla-text">
                     {description}
                 </p>
             )}
@@ -64,11 +64,11 @@ export function EmptyState({ icon = '🧸', title = 'কোনো ডাটা �
 export function SectionHeader({ title, subtitle, className = '' }) {
     return (
         <div className={`flex flex-col items-center mb-10 space-y-3 ${className}`}>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 text-center bangla-heading">
                 {title}
             </h2>
             {subtitle && (
-                <p className="text-gray-600 text-center max-w-xl">
+                <p className="text-gray-600 text-center max-w-xl bangla-text">
                     {subtitle}
                 </p>
             )}

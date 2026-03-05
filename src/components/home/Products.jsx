@@ -4,6 +4,8 @@ import ProductCard from '@/components/cards/ProductCard';
 import Link from 'next/link';
 import { ErrorAlert, EmptyState, SectionHeader } from '@/components/ui/CommonUI';
 
+
+
 const Products = async () => {
     // Fetch limited products for home page
     let products = [];
@@ -42,7 +44,7 @@ const Products = async () => {
             {/* Products Grid */}
             {!error && products?.length > 0 && (
                 <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-slideInUp">
                         {products.map((product, index) => (
                             <ProductCard 
                                 key={product._id || index} 
@@ -54,7 +56,7 @@ const Products = async () => {
                     {/* View All Button */}
                     <div className="flex justify-center mt-10">
                         <Link href="/routes/products">
-                            <button className="btn btn-primary btn-lg gap-2">
+                            <button className="btn btn-primary btn-lg gap-2 bangla-font shadow-xl hover:shadow-2xl transition-all hover:scale-105">
                                 সব পণ্য দেখুন
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />

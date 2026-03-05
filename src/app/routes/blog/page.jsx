@@ -4,6 +4,32 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from '@/components/ui/CommonUI';
 
+export const metadata = {
+    title: "ব্লগ - শিশু যত্ন ও খেলনা সম্পর্কিত টিপস",
+    description: "শিশুর বিকাশ, খেলনা নির্বাচন, এবং প্যারেন্টিং টিপস সম্পর্কে জানুন। বিশেষজ্ঞদের পরামর্শ এবং গাইড পড়ুন হিরো কিডস ব্লগে।",
+    keywords: ["শিশু যত্ন", "খেলনা টিপস", "প্যারেন্টিং", "শিশুর বিকাশ", "শিক্ষামূলক খেলনা"],
+    openGraph: {
+        title: "ব্লগ - হিরো কিডস",
+        description: "শিশুর বিকাশ এবং খেলনা নির্বাচন সম্পর্কিত টিপস ও পরামর্শ।",
+        type: "website",
+        url: "https://herokidz36.vercel.app/routes/blog",
+        images: [{
+            url: "https://i.ibb.co.com/xS2HhC38/Screenshot-2026-03-05-124723.png",
+            width: 1200,
+            height: 630,
+            alt: "হিরো কিডস ব্লগ",
+        }],
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "ব্লগ - হিরো কিডস",
+        description: "শিশুর বিকাশ এবং খেলনা নির্বাচন সম্পর্কিত টিপস।",
+    },
+    alternates: {
+        canonical: "https://herokidz36.vercel.app/routes/blog",
+    }
+};
+
 const BlogPage = () => {
     // Sample blog data (পরে MongoDB থেকে load করা যাবে)
     const blogs = [
