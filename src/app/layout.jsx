@@ -2,6 +2,7 @@ import { Poppins, Hind_Siliguri } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/layouts/Footer";
+import AuthProvider from "@/components/AuthProvider";
 
 const poppins = Poppins(
   {
@@ -158,18 +159,19 @@ export default function RootLayout({ children }) {
         className={`${poppins.variable} ${hindSiliguri.variable} antialiased`}
         style={{ fontFamily: 'var(--font-hind-siliguri), var(--font-poppins), system-ui, sans-serif' }}
       >
-        <header className="py-2 max-w-11/12 mx-auto">
-          <Navbar />
-        </header>
+        <AuthProvider>
+          <header className="py-2 max-w-11/12 mx-auto">
+            <Navbar />
+          </header>
 
-        <main className=" max-w-11/12 mx-auto py-2">
-          {children}
-        </main>
-       
-       <footer className="mt-10">
-        <Footer />
-       </footer>
-
+          <main className=" max-w-11/12 mx-auto py-2">
+            {children}
+          </main>
+         
+         <footer className="mt-10">
+          <Footer />
+         </footer>
+        </AuthProvider>
       </body>
     </html>
   );

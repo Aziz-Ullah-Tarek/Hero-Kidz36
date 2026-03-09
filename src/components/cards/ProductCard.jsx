@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FaStar, FaShoppingCart, FaEye } from "react-icons/fa";
+import { FaStar, FaEye } from "react-icons/fa";
 import { MdLocalOffer } from "react-icons/md";
 import { calculateDiscountedPrice, isOnSale, getDiscountBadgeText } from "@/lib/utils";
+import AddToCartButton from "@/components/buttons/AddToCartButton";
 
 export default function ProductCard({ product }) {
   const {
@@ -86,10 +87,11 @@ export default function ProductCard({ product }) {
               বিস্তারিত
             </button>
           </Link>
-          <button className="btn btn-primary btn-sm flex-1 gap-2 bangla-font shadow-md hover:shadow-lg transition-all">
-            <FaShoppingCart />
-            কার্ট
-          </button>
+          <AddToCartButton 
+            product={product} 
+            className="flex-1"
+            size="btn-sm"
+          />
         </div>
       </div>
     </div>

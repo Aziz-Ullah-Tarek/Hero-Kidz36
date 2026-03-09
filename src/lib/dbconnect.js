@@ -63,5 +63,16 @@ export const dbconnect = async (cname) => {
     }
 }
 
+// Export function to get database instance (for auth)
+export const connectDB = async () => {
+    try {
+        const connectedClient = await clientPromise;
+        return connectedClient.db(dbName);
+    } catch (error) {
+        console.error('MongoDB connection error:', error);
+        throw new Error(`Failed to connect to database: ${error.message}`);
+    }
+}
+
 // Export ObjectId for use in other files
 export { ObjectId };

@@ -1,47 +1,121 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaTrash, FaPlus, FaMinus, FaShoppingBag, FaTruck, FaLock, FaArrowLeft } from 'react-icons/fa';
 import { MdLocalOffer } from 'react-icons/md';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from '@/components/ui/CommonUI';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Swal from 'sweetalert2';
 
 const CartPage = () => {
-    // Sample cart data (পরে Context API বা Redux দিয়ে manage করা যাবে)
-    const [cartItems, setCartItems] = useState([
-        {
-            id: 1,
-            title: "Number and Counting Learning Board",
-            bangla: "সংখ্যা ও গণনা শেখার শিক্ষামূলক বোর্ড",
-            image: "https://i.ibb.co.com/p6Q0fchX/81a72-DDFc-KL-AC-SL1500.jpg",
-            price: 1250,
-            discount: 10,
-            quantity: 1
-        },
-        {
-            id: 2,
-            title: "Animal and Nature Learning Flash Cards",
-            bangla: "প্রাণী ও প্রকৃতি শেখার ফ্ল্যাশ কার্ড",
-            image: "https://i.ibb.co.com/QFDWpCf4/s-l1600.webp",
-            price: 950,
-            discount: 15,
-            quantity: 2
-        }
-    ]);
+    const { data: session, status } = useSession();
+    const router = useRouter();
+    const [cartItems, setCartItems] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const updateQuantity = (id, change) => {
-        setCartItems(items =>
-            items.map(item =>
-                item.id === id
-                    ? { ...item, quantity: Math.max(1, item.quantity + change) }
-                    : item
-            )
-        );
+    // Check authentication
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'লগইন প্রয়োজন',
+                text: 'কার্ট দেখতে প্রথমে লগইন করুন',
+                confirmButtonText: 'লগইন করুন',
+                confirmButtonColor: '#3b82f6'
+            }).then(() => {
+                router.push(`/routes/login?callbackUrl=${encodeURIComponent('/routes/cart')}`);
+            });
+        }
+    }, [status, router]);
+
+    // Load cart from localStorage
+    useEffect(() => {
+        if (status === 'authenticated') {
+            const loadCart = () => {
+                try {
+                    const savedCart = localStorage.getItem('cart');
+                    if (savedCart) {
+                        const parsedCart = JSON.parse(savedCart);
+                        setCartItems(parsedCart);
+                    }
+                } catch (error) {
+                    console.error('Error loading cart:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'ত্রুটি',
+                        text: 'কার্ট লোড করতে সমস্যা হয়েছে',
+                        toast: true,
+                        position: 'top-end',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+                setIsLoading(false);
+            };
+
+            loadCart();
+
+            // Listen for cart updates
+            const handleCartUpdate = () => loadCart();
+            window.addEventListener('cartUpdated', handleCartUpdate);
+
+            return () => {
+                window.removeEventListener('cartUpdated', handleCartUpdate);
+            };
+        }
+    }, [status]);
+
+    const updateCart = (newCartItems) => {
+        setCartItems(newCartItems);
+        localStorage.setItem('cart', JSON.stringify(newCartItems));
+        window.dispatchEvent(new Event('cartUpdated'));
     };
 
-    const removeItem = (id) => {
-        setCartItems(items => items.filter(item => item.id !== id));
+    const updateQuantity = (id, change) => {
+        const updatedItems = cartItems.map(item =>
+            item._id === id
+                ? { ...item, quantity: Math.max(1, (item.quantity || 1) + change) }
+                : item
+        );
+        updateCart(updatedItems);
+
+        Swal.fire({
+            icon: 'success',
+            text: change > 0 ? 'পরিমাণ বাড়ানো হয়েছে' : 'পরিমাণ কমানো হয়েছে',
+            toast: true,
+            position: 'top-end',
+            timer: 1000,
+            showConfirmButton: false
+        });
+    };
+
+    const removeItem = async (id) => {
+        const result = await Swal.fire({
+            icon: 'warning',
+            title: 'নিশ্চিত করুন',
+            text: 'এই পণ্যটি কার্ট থেকে সরাতে চান?',
+            showCancelButton: true,
+            confirmButtonText: 'হ্যাঁ, সরান',
+            cancelButtonText: 'না',
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280'
+        });
+
+        if (result.isConfirmed) {
+            const updatedItems = cartItems.filter(item => item._id !== id);
+            updateCart(updatedItems);
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'সরানো হয়েছে',
+                text: 'পণ্যটি কার্ট থেকে সরানো হয়েছে',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
     };
 
     const getDiscountedPrice = (price, discount) => {
@@ -49,15 +123,31 @@ const CartPage = () => {
     };
 
     const subtotal = cartItems.reduce((total, item) => {
-        return total + (getDiscountedPrice(item.price, item.discount) * item.quantity);
+        return total + (getDiscountedPrice(item.price, item.discount) * (item.quantity || 1));
     }, 0);
 
     const shippingCost = subtotal >= 2000 ? 0 : 60;
     const vat = Math.round(subtotal * 0.05); // 5% VAT
     const total = subtotal + shippingCost + vat;
     const totalSavings = cartItems.reduce((total, item) => {
-        return total + ((item.price - getDiscountedPrice(item.price, item.discount)) * item.quantity);
+        return total + ((item.price - getDiscountedPrice(item.price, item.discount)) * (item.quantity || 1));
     }, 0);
+
+    // Show loading state
+    if (status === 'loading' || isLoading) {
+        return (
+            <Container className="py-8">
+                <div className="flex justify-center items-center min-h-[60vh]">
+                    <span className="loading loading-spinner loading-lg text-primary"></span>
+                </div>
+            </Container>
+        );
+    }
+
+    // Don't render if not authenticated
+    if (status === 'unauthenticated') {
+        return null;
+    }
 
     return (
         <Container className="py-8">
@@ -121,8 +211,9 @@ const CartPage = () => {
                         {/* Product Cards */}
                         {cartItems.map(item => {
                             const discountedPrice = getDiscountedPrice(item.price, item.discount);
+                            const itemQuantity = item.quantity || 1;
                             return (
-                                <div key={item.id} className="card bg-base-100 shadow-xl cart-card-hover border-2 border-gray-100 animate-slideInUp">
+                                <div key={item._id} className="card bg-base-100 shadow-xl cart-card-hover border-2 border-gray-100 animate-slideInUp">
                                     <div className="card-body p-4 md:p-6">
                                         <div className="flex flex-col sm:flex-row gap-4">
                                             {/* Product Image */}
@@ -168,17 +259,17 @@ const CartPage = () => {
                                                     <div className="join shadow-lg border-2 border-primary/20">
                                                         <button 
                                                             className="btn join-item btn-sm hover:bg-primary hover:text-white transition-all"
-                                                            onClick={() => updateQuantity(item.id, -1)}
-                                                            disabled={item.quantity <= 1}
+                                                            onClick={() => updateQuantity(item._id, -1)}
+                                                            disabled={itemQuantity <= 1}
                                                         >
                                                             <FaMinus />
                                                         </button>
                                                         <button className="btn join-item btn-sm px-6 bangla-font font-bold">
-                                                            {item.quantity}
+                                                            {itemQuantity}
                                                         </button>
                                                         <button 
                                                             className="btn join-item btn-sm hover:bg-primary hover:text-white transition-all"
-                                                            onClick={() => updateQuantity(item.id, 1)}
+                                                            onClick={() => updateQuantity(item._id, 1)}
                                                         >
                                                             <FaPlus />
                                                         </button>
@@ -189,12 +280,12 @@ const CartPage = () => {
                                                         <div className="text-right">
                                                             <p className="text-xs text-gray-500 bangla-text">সাবটোটাল</p>
                                                             <p className="text-lg font-bold text-primary bangla-font">
-                                                                ৳{Math.round(discountedPrice * item.quantity)}
+                                                                ৳{Math.round(discountedPrice * itemQuantity)}
                                                             </p>
                                                         </div>
                                                         <button 
                                                             className="btn btn-circle btn-sm btn-error btn-outline hover:scale-110 transition-transform shadow-md"
-                                                            onClick={() => removeItem(item.id)}
+                                                            onClick={() => removeItem(item._id)}
                                                             title="মুছে ফেলুন"
                                                         >
                                                             <FaTrash />

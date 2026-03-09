@@ -2,10 +2,11 @@ import React from 'react';
 import { dbconnect, collections, ObjectId } from '@/lib/dbconnect';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaStar, FaShoppingCart, FaArrowLeft, FaBox, FaTruck, FaShieldAlt } from 'react-icons/fa';
+import { FaStar, FaArrowLeft, FaBox, FaTruck, FaShieldAlt } from 'react-icons/fa';
 import { MdLocalOffer } from 'react-icons/md';
 import { calculateDiscountedPrice, isOnSale, getDiscountBadgeText } from '@/lib/utils';
 import { Container } from '@/components/ui/CommonUI';
+import ProductActions from '@/components/buttons/ProductActions';
 
 // Generate metadata for dynamic product pages
 export async function generateMetadata({ params }) {
@@ -291,15 +292,7 @@ const ProductDetailsPage = async ({ params }) => {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="space-y-3">
-                        <button className="btn btn-primary btn-lg w-full gap-2 text-lg">
-                            <FaShoppingCart />
-                            কার্টে যোগ করুন
-                        </button>
-                        <button className="btn btn-accent btn-lg w-full gap-2 text-lg">
-                            এখনই কিনুন
-                        </button>
-                    </div>
+                    <ProductActions product={JSON.parse(JSON.stringify(product))} />
 
                     {/* Features */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t">
